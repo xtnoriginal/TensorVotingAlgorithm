@@ -33,6 +33,10 @@ def run_progarm():
     one_ring_face = model3D.compute_vertex_face_ring(F)
     nov = len(V)
 
+    # model3D.compute_average_length(V,F)
+    thgm = 0.2845  # todo implement method
+
+
     #Display model
     model3D.display_mesh(mesh)
 
