@@ -86,3 +86,26 @@ def  show_feature_vertex(V,F,Sharp_edge_v, Corner_v):
         ax.scatter(V[i-1][0], V[i-1][1], V[i-1][2],color='red')  # plot the point (2,3,4) on the figure
 
     plt.show()
+
+
+def show_vertex_salience(V, F, Cn):
+    '''
+    show_show_vertex_salience - plot salience of vertex on 3D mesh.
+
+    show_vertex_salience(V,F,Salience)
+
+        - 'V' : a (n x 3) array vertex coordinates
+        - 'F' : a (m x 3) array faces
+        - 'Salience' : (n x 1) array scalar salience value of each vertex
+
+   Copyright (c) 2012 Xiaochao Wang
+    :param V:
+    :param F:
+    :param Cn:
+    :return:
+    '''
+
+
+
+
+    return None
