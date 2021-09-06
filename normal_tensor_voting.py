@@ -1,6 +1,5 @@
 import numpy as np
 import math
-
 import graph_plotter
 import model3D
 
@@ -29,10 +28,11 @@ def normal_tensor_voting(V, F, D, alpha, beta):
     Face_v = []
     Corner_v = []
 
+
     # number of vertex
     nov = D.nov
     # the even-value
-    EVEN = np.zeros([len(V), 3])
+    EVEN = []
 
     # the even-vector
     EVTO = np.zeros([nov, 9])
@@ -44,8 +44,6 @@ def normal_tensor_voting(V, F, D, alpha, beta):
         v = V[i]  # current vertex
 
         f = D.one_ring_face[i]  # one ring faces of the current vertex
-
-
 
         weigth = 0  # weight
         Max_area = 0  # Maximum area among neighbor vertices
@@ -69,7 +67,7 @@ def normal_tensor_voting(V, F, D, alpha, beta):
         area_face = np.zeros(len(f))
 
         # compute the area of one-ring faces
-        count =0
+        count = 0
         for j in f:
             vi = V[F[j][0]]
             vj = V[F[j][1]]
@@ -78,11 +76,9 @@ def normal_tensor_voting(V, F, D, alpha, beta):
             temp = np.cross(np.subtract(vi, vk), np.subtract(vi, vj))
 
             area_face[count] = 0.5 * np.linalg.norm(temp)
-            count+=1
-
+            count += 1
 
         Max_area = area_face.max(0)
-
 
         vi = [V[F[i_x][0]] for i_x in f]
         vj = [V[F[j_x][1]] for j_x in f]
@@ -91,11 +87,10 @@ def normal_tensor_voting(V, F, D, alpha, beta):
         # the baricenter of each face of one-ring face
         Center = np.divide(np.add(np.add(vi, vj), vk), 3)
 
-
         # the one ring face normal
         normalf = np.empty([len(F), 3])
 
-        count = 0;
+        count = 0
         for j in f:
             normalf[count] = np.cross(np.subtract(V[F[j][1]], V[F[j][0]]), np.subtract(V[F[j][2]], V[F[j][1]]))
             normalf[count] = np.divide(normalf[count], np.linalg.norm(normalf[count]))
@@ -105,30 +100,50 @@ def normal_tensor_voting(V, F, D, alpha, beta):
 
         # compete the formal tensor voting of vertex v
         for j in range(len(f)):
-            weigth = (area_face[j]/Max_area) * math.exp(-(np.linalg.norm(np.subtract(Center[j], v))/thta))
+            weigth = (area_face[j] / Max_area) * math.exp(-(np.linalg.norm(np.subtract(Center[j], v)) / thta))
 
             temp_fn = fn[j]
             temp_fn.transpose()
+            temp_fn = [[i] for i in temp_fn]
 
-            T = T + np.multiply(np.multiply(weigth, temp_fn), fn[j])#to do debug here
-            print(T)
+            T = T + np.multiply(np.multiply(weigth, temp_fn), fn[j])
 
+        np.nan_to_num(T)
+        T.astype(float)
         # apply eig analysis
-        Vec, L = np.linalg.eig(T)
-        Li = np.diag(L)
+        L, Vec = np.linalg.eig(T)
+        Li = L
 
-        e1 = Vec[0]
-        e2 = Vec[1]
-        e3 = Vec[2]
+
+        Id = Li.argsort()
+        Li.sort()
+        Li = Li[::-1]
+        print(Id)
+
+        e1 = Vec[Id[0]]
+        e2 = Vec[Id[1]]
+        e3 = Vec[Id[2]]
 
         # Normalise a eigen values
         Li = np.divide(Li, np.linalg.norm(Li))
 
-        EVEN[i] = Li
-        EVTO[i] = e1 + e2 + e3
 
-    EVEN = read_file_u('TEST\\EVEN.txt')
-    EVTO = read_file_u('TEST\\EVTO.txt')
+        e123 = []
+        for i in range(3):
+            e123.append(e1[i])
+
+        for i in range(3):
+            e123.append(e2[i])
+
+        for i in range(3):
+            e123.append(e3[i])
+
+        EVEN.append(Li)
+        EVTO[i] = e123
+
+    # print(EVEN)
+    # EVEN = read_file_u('TEST\\EVEN.txt')
+    # EVTO = read_file_u('TEST\\EVTO.txt')
 
     # iterative adjust parameters to get pleasant result
     while True:
@@ -163,7 +178,6 @@ def normal_tensor_voting(V, F, D, alpha, beta):
             print('The previous alpha is %f: ', beta)
             beta = input('Please input a new alpha: ')
 
-
     '''
     Sharp_edge_v = [9, 11, 12, 13, 14, 16, 17, 19, 20, 21, 23, 25, 27, 29, 32, 33, 37, 39, 42, 43, 46, 48, 51, 52, 56,
                     58, 59, 63, 64, 67, 71, 74, 75, 81, 85, 91, 99, 101, 104, 105, 109, 111, 114, 115, 118, 120, 123,
@@ -175,6 +189,37 @@ def normal_tensor_voting(V, F, D, alpha, beta):
     PRIN = read_file_u('TEST\\PRIN.txt')
     '''
     return Sharp_edge_v, Corner_v, EVEN, PRIN
+
+def sort_mat(Li):
+    res = np.zeros(3)
+    for i in range(3):
+        for j in range(6):
+            pass
+
+def read_T_file():
+    file = open('TEST\\T.txt')
+    res = []
+    temp_l = []
+    for i in file:
+        if len(i) == 1:
+            res.append(temp_l)
+            temp_l = []
+            continue
+
+        temp = []
+        for j in i.strip().split('   '):
+
+            if j == '':
+                continue
+            else:
+                temp.append(float(j))
+        # res.append([float(j) for j in i.strip().split('   ')])
+        temp_l.append(temp)
+    file.close()
+    return res
+
+
+
 
 
 def read_file_u(filename):
@@ -350,7 +395,7 @@ def intersect_mtlb(a, b):
     return c, ia[np.isin(a1, c)], ib[np.isin(b1, c)]
 
 
-def connect_feature_line(M,F_R_P,Corner_v):
+def connect_feature_line(Sharp_edge_v,Corner_v):
     '''
     connect_feature_line - connect feature vertex to feature lines
 
@@ -378,11 +423,32 @@ def connect_feature_line(M,F_R_P,Corner_v):
  `  :param Corner_v:
     :return:
     '''
+    '''
+    Sharp_edge_v = [9, 11, 12, 13, 14, 16, 17, 19, 20, 21, 23, 25, 27, 29, 32, 33, 37, 39, 42, 43, 46, 48, 51, 52, 56,
+                    58, 59, 63, 64, 67, 71, 74, 75, 81, 85, 91, 99, 101, 104, 105, 109, 111, 114, 115, 118, 120, 123,
+                    124, 128, 130, 131, 138, 146, 147, 161, 168, 176, 177, 185, 192, 200, 201, 215, 222, 223, 227, 232,
+                    240, 252, 260, 268, 272, 273, 283, 284, 293, 303, 306, 311, 314, 315, 333, 343, 361]
+    Corner_v = [1, 2, 3, 4, 5, 6, 7, 8]
+    '''
+    Feature_p = []
+    for i in Sharp_edge_v:
+        Feature_p.append(i)
 
-    Sharp_edge_v = F_R_P
-    Feature_p = [Corner_v ,Sharp_edge_v]
+    for i in Corner_v:
+        Feature_p.append(i)
+
+    nse = len(Feature_p)
+
+    Labled = []
+    Edge = []  # n*2, storage the connection information of feature line
+    Isolated = []  # storage the isoalated points
+
+    for i in range(nse):
+        v = Feature_p[i]
+        Labled.append(v)
+
 
 
     Edge = read_file_u('Test/Edge.txt')
 
-    return  Sharp_edge_v,Corner_v, Edge
+    return Sharp_edge_v, Corner_v, Edge

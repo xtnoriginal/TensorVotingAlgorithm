@@ -36,7 +36,8 @@ def compute_average_length(V, F):
     j = np.concatenate([F[:, 1], F[:, 2], F[:, 0]])
 
     #A = scipy.sparse.csr_matrix( (i, j))
-    # todo Implement sparse and find
+    #todo Implement sparse and find
+
     d = np.sqrt(np.square(np.subtract(V[i, :], V[j, :])))
 
     return np.sum(d) / len(d)
@@ -104,6 +105,11 @@ def show_vertex_salience(V, F, Cn):
     :param Cn:
     :return:
     '''
+
+
+
+
+
 
 
 

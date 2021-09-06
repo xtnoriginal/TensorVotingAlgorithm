@@ -1,5 +1,7 @@
 import math
-
+import open3d as o3d
+from numba import jit, cuda
+import numpy
 import numpy as np
 import pymesh
 import potpourri3d as pp3d
@@ -29,11 +31,32 @@ class DataStructure:
 
 
 def run_progarm():
+
+
     # read models
     mesh = model3D.read_model('Models/OFF/cube.off')
+    #mesh = model3D.read_model('Models/OFF/fandisk_noise.off')
+    #mesh = model3D.read_model('Models/PLY/Chapel.ply')
+
     V = np.asarray(mesh.vertices)
     F = np.asarray(mesh.triangles)
 
+
+
+    #halfedge = o3d.geometry.HalfEdgeTriangleMesh.create_from_triangle_mesh(mesh)
+
+    #graph_plotter.show_feature_line(V, F, Edge)
+    #Edge = normal_tensor_voting.read_file_u('Test/Edge.txt')
+
+    '''
+    colors = [[1, 0, 0] for i in range(len(V))]
+    line_set = o3d.geometry.LineSet(
+        points=o3d.utility.Vector3dVector(V),
+        lines=o3d.utility.Vector2iVector(Edge),
+    )
+    line_set.colors = o3d.utility.Vector3dVector(colors)
+    o3d.visualization.draw_geometries([line_set])
+    '''
     # one ring vertices of a vertex
     mesh.compute_adjacency_list()
     one_ring_vertex = np.asarray(mesh.adjacency_list)
@@ -44,7 +67,7 @@ def run_progarm():
 
 
     #Expected value 0.2845
-    thgm = model3D.compute_average_length(V,F)  # todo implement method
+    thgm = model3D.compute_average_length(V,F)
 
     # compute vertex and face normals
     mesh.compute_vertex_normals()
@@ -55,7 +78,7 @@ def run_progarm():
     D = DataStructure(one_ring_vertex, one_ring_face, thgm, normal, nov)
 
     # Display model
-    #model3D.display_mesh(mesh)
+    model3D.display_mesh(mesh)
 
     # Part1: Detect the initial feature vertex based on normal tensor voting
     # Parameters
@@ -65,8 +88,9 @@ def run_progarm():
     # Normal tensor voting
     # [Sharp_edge_v, Corner_v, Even, PRIN] = normal_tensor voting(V,F,D,alpha,beta)
     Sharp_edge_v, Corner_v, EVEN, PRIN = normal_tensor_voting.normal_tensor_voting(V, F, D, alpha,
-                                                                           beta)  # todo finish of tensor voting
-    '''
+                                                                 beta)
+
+
     # show mesh and feature vertex
     model3D.show_feature_vertex(V, F, Sharp_edge_v, Corner_v)
 
@@ -75,7 +99,7 @@ def run_progarm():
     #
 
     Salience , EHSalience , LENTH= normal_tensor_voting.compute_enhanced_salience_measure(V,F,D,PRIN,EVEN,Sharp_edge_v, Corner_v)
-
+    '''
     # show the salience measure
     TH = []
     Id = []
@@ -133,12 +157,12 @@ def run_progarm():
     #
     #PART 3: Connect the feature point to feature line
     #
+    
 
-    Sharp_edge_v, Corner_v, Edge =  normal_tensor_voting.connect_feature_line(1,F_R_P,Corner_v)
+    
+    Sharp_edge_v, Corner_v, Edge =  normal_tensor_voting.connect_feature_line(Sharp_edge_v,Corner_v)
     graph_plotter.show_feature_line(V,F, Edge)
-
     '''
-
 
 
 

@@ -23,6 +23,7 @@ def show_feature_line(V,F,Edge):
     fig = plt.figure(figsize=(4, 4))
 
     ax = plt.axes(projection='3d')
+    ax.mouse_init()
 
     for i in range(len(Edge)):
         Temp = Edge[i]
@@ -41,6 +42,11 @@ def show_feature_line(V,F,Edge):
 
         ax.plot3D(x , y , z ,'green')
 
+    # rotate the axes and update
+    for angle in range(0, 360):
+        ax.view_init(30, angle)
+        plt.draw()
+        plt.pause(.001)
 
     plt.show()
 
