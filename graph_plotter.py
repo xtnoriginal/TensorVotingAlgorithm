@@ -17,8 +17,8 @@ def  show_feature_vertex(V,F,Sharp_edge_v, Corner_v):
 
     plt.show()
 
-def show_feature_line(V,F,Edge):
 
+def show_feature_line(V,F,Edge):
 
     fig = plt.figure(figsize=(4, 4))
 
@@ -28,27 +28,22 @@ def show_feature_line(V,F,Edge):
     for i in range(len(Edge)):
         Temp = Edge[i]
 
-        ax.scatter(V[int(Temp[0])-1][0], V[int(Temp[0])-1][1], V[int(Temp[0])-1][2], color='blue')
-        ax.scatter(V[int(Temp[1])-1][0], V[int(Temp[1]) - 1][1], V[int(Temp[1]) - 1][2], color='blue')
+        ax.scatter(V[int(Temp[0])][0], V[int(Temp[0])][1], V[int(Temp[0])][2], color='blue')
+        ax.scatter(V[int(Temp[1])][0], V[int(Temp[1]) ][1], V[int(Temp[1])][2], color='blue')
 
 
 
     for i in range(len(Edge)):
         Temp =  Edge[i]
 
-        x = [V[int(Temp[0])-1][0], V[int(Temp[1])-1][0]]
-        y = [V[int(Temp[0])-1][1], V[int(Temp[1])-1][1]]
-        z = [V[int(Temp[0])-1][2], V[int(Temp[1])-1][2]]
+        x = [V[int(Temp[0])][0], V[int(Temp[1])][0]]
+        y = [V[int(Temp[0])][1], V[int(Temp[1])][1]]
+        z = [V[int(Temp[0])][2], V[int(Temp[1])][2]]
 
         ax.plot3D(x , y , z ,'green')
 
-    # rotate the axes and update
-    for angle in range(0, 360):
-        ax.view_init(30, angle)
-        plt.draw()
-        plt.pause(.001)
-
     plt.show()
+    #plt.savefig("out.png")
 
 
 

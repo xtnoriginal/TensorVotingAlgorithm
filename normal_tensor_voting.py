@@ -118,7 +118,6 @@ def normal_tensor_voting(V, F, D, alpha, beta):
         Id = Li.argsort()
         Li.sort()
         Li = Li[::-1]
-        print(Id)
 
         e1 = Vec[Id[0]]
         e2 = Vec[Id[1]]
@@ -174,20 +173,11 @@ def normal_tensor_voting(V, F, D, alpha, beta):
             break
         else:
             print('The previous alpha is %f: ', alpha)
-            alpha = input('Please input a new alpha: ')
+            alpha = eval(input('Please input a new alpha: '))
             print('The previous alpha is %f: ', beta)
-            beta = input('Please input a new alpha: ')
+            beta = eval(input('Please input a new alpha: '))
 
-    '''
-    Sharp_edge_v = [9, 11, 12, 13, 14, 16, 17, 19, 20, 21, 23, 25, 27, 29, 32, 33, 37, 39, 42, 43, 46, 48, 51, 52, 56,
-                    58, 59, 63, 64, 67, 71, 74, 75, 81, 85, 91, 99, 101, 104, 105, 109, 111, 114, 115, 118, 120, 123,
-                    124, 128, 130, 131, 138, 146, 147, 161, 168, 176, 177, 185, 192, 200, 201, 215, 222, 223, 227, 232,
-                    240, 252, 260, 268, 272, 273, 283, 284, 293, 303, 306, 311, 314, 315, 333, 343, 361]
-    Corner_v = [1, 2, 3, 4, 5, 6, 7, 8]
 
-    EVEN = read_file_u('TEST\\EVEN.txt')
-    PRIN = read_file_u('TEST\\PRIN.txt')
-    '''
     return Sharp_edge_v, Corner_v, EVEN, PRIN
 
 def sort_mat(Li):
@@ -266,13 +256,13 @@ def compute_enhanced_salience_measure(V, F, D, PRIN, EVEN, Sharp_edge_v, Corner_
     Cn = np.divide(np.subtract(np.add(np.add(x_even, y_even), z_even), 1), 2)
 
     # normalize the $E$ to [0 1]
-    Cn = Cn / max(Cn);
+    Cn = Cn / max(Cn)
 
     # todo show_vertex_salience
 
     Salience = np.zeros(D.nov)
     EHSalience = np.zeros(D.nov)
-    LENTH = np.zeros(D.nov);  # record the lenth of the potential feature neighbors
+    LENTH = np.zeros(D.nov)  # record the lenth of the potential feature neighbors
 
     # used parameters
     K = 40
@@ -295,13 +285,17 @@ def compute_enhanced_salience_measure(V, F, D, PRIN, EVEN, Sharp_edge_v, Corner_
             Salience[i] = abs(Cn[i])
             # Saliencel[i] = abs(Cn[i])
 
-        v_r_l_c = [V[h] for h in v_ring_1_arr]
-        v_ring_dest = np.subtract(v_r_l_c, np.tile(v, (len(v_ring_1), 1)))
+
+        v_r_l_c = [V[h] for h in v_ring_1_arr] #one ring vertex coordinates
+        v_ring_dest = np.subtract(v_r_l_c, np.tile(v, (len(v_ring_1), 1))) #the vector from v to one ring vertices
 
         # project the v_ring dest at the tangent plane
         p_ring_1 = np.subtract(v_ring_dest, np.multiply(np.multiply(v_ring_dest, np.ndarray.transpose(n_v)), n_v))
-        # p_ring_1 =  np.multiply(np.linalg.inv(np.diag(np.sqrt(np.sum(np.power(p_ring_1,2),2)))), p_ring_1) todo giving an error
+        #p_ring_1 =  np.multiply(np.linalg.inv(np.diag(np.sqrt(np.sum(np.power(p_ring_1,2),2)))), p_ring_1) #todo giving an error
 
+        print(p_ring_1)
+
+        '''
         p_c_m_d = PRIN[i]  # the principal director based on th tensor
         # First decide wether the two neighbor points along the principal lines
         # the active front of along the principal curvature line
@@ -314,13 +308,24 @@ def compute_enhanced_salience_measure(V, F, D, PRIN, EVEN, Sharp_edge_v, Corner_
         temp = [];
         Id1 = [];
         Id2 = [];
-        temp = p_ring_1 * p_c_m_d
+
+
+        temp = np.multiply(p_ring_1, np.asarray(p_c_m_d).T) #todo method wrong
+        #temp = p_ring_1 * p_c_m_d
+
+
+        # divide the temp into two group
+        Id2 = np.argsort(temp)
+
+
 
         Energ = [0, 0, 0, 0]
 
         Comb = np.zeros([4, 2]);
         Posi = np.zeros([4, 2]);
         cont = 0
+
+        '''
         '''
         for il in range():
             Fi = v_ring_1_arr[0]#todo fix id
@@ -329,7 +334,7 @@ def compute_enhanced_salience_measure(V, F, D, PRIN, EVEN, Sharp_edge_v, Corner_
                 Si = v_ring_1(j1)
                 Posi[cont]
 
-
+        
         #
         #
         for t1 in range(2):
@@ -351,15 +356,10 @@ def compute_enhanced_salience_measure(V, F, D, PRIN, EVEN, Sharp_edge_v, Corner_
             if t > math.pi/2:
                 t = math.pi-t
             
-            
-            
-            
-            
-            
             #should  be summed with guassian weight
             dist1 = [] #the distance wights
-            dist1 = 
         '''
+
 
     LENTH = read_file('TEST/LENTH.txt')
     EHSalience = read_file('TEST/EHSalience.txt')
@@ -395,7 +395,7 @@ def intersect_mtlb(a, b):
     return c, ia[np.isin(a1, c)], ib[np.isin(b1, c)]
 
 
-def connect_feature_line(Sharp_edge_v,Corner_v):
+def connect_feature_line(M,Sharp_edge_v,Corner_v):
     '''
     connect_feature_line - connect feature vertex to feature lines
 
@@ -420,7 +420,7 @@ def connect_feature_line(Sharp_edge_v,Corner_v):
 
     :param M:
     :param F_R_P:
- `  :param Corner_v:
+    :param Corner_v:
     :return:
     '''
     '''
@@ -430,13 +430,40 @@ def connect_feature_line(Sharp_edge_v,Corner_v):
                     240, 252, 260, 268, 272, 273, 283, 284, 293, 303, 306, 311, 314, 315, 333, 343, 361]
     Corner_v = [1, 2, 3, 4, 5, 6, 7, 8]
     '''
-    Feature_p = []
+
+
+
+
+
+    Feature_p = set()
     for i in Sharp_edge_v:
-        Feature_p.append(i)
+        Feature_p.add(i-1)
 
     for i in Corner_v:
-        Feature_p.append(i)
+        Feature_p.add(i)
 
+    nse = len(Feature_p)
+
+    Labled = []
+    Edge = []  # n*2, storage the connection information of feature line
+    Isolated = []  # storage the isoalated points
+
+    for i in Feature_p:
+        v = i
+        Labled.append(v)
+        v_r = M.ordered_half_edge_from_vertex[i]
+
+        cont = 0
+        for j in range(len(v_r)):
+            print(cont)
+            cont+=1
+            vd = M.half_edges[v_r[j]].vertex_indices
+            if vd[0] in Feature_p and vd[1] in Feature_p:
+                Edge.append(vd)
+
+    print(Edge)
+    return Edge
+    '''
     nse = len(Feature_p)
 
     Labled = []
@@ -446,9 +473,177 @@ def connect_feature_line(Sharp_edge_v,Corner_v):
     for i in range(nse):
         v = Feature_p[i]
         Labled.append(v)
+        v_r = M.ordered_half_edge_from_vertex[i]
+
+        cont = 0
+        for j in range(len(v_r)):
+            vd = M.half_edges[v_r[j]].vertex_indices[1]
+            print(M.half_edges[v_r[j]].vertex_indices)
+            if Feature_p.__contains__(vd):
+                cont -= 1
+
+            if Feature_p.__contains__(vd) and not Labled.__contains__(vd):
+                # corner vertex has priority connect to neighbors
+                if Corner_v.__contains__(vd):
+                    Edge.append([v, vd])
+                    continue
+
+                # consider the third vertex
+                e_n = M.half_edges[v_r[j]].next  # the next edge of vd
+                #print(v_r[j])
+                vn = M.half_edges[e_n].vertex_indices[1]  # the end vertex of e_n
+
+                # the three vertices of one face are all feature points
+                if not Corner_v.__contains__(vn):
+                    # consider the oposite triangle
+                    e_n = M.half_edges[v_r[j]].twin  # the prev edge of twin of v_r(j)
+                    vn_p = M.half_edges[M.half_edges[e_n].triangle_index ].vertex_indices[1] # the orig vertex of e_n
+
+                    if Corner_v.__contains__(vn_p):
+                        Edge.append([v, vd])  # creat the connectiong of the feature vertices
+                        continue
+
+            cont = cont + 1
+
+        #if no vertex of its one ring connecting to it, it is a iisolated points
+        if cont == len(v_r) - 1:
+            Isolated.append(v)
+
+    # delete isolated feature vertex
+    if len(Isolated) == 0:
+        pass
+
+    print(Edge)
+        
+            vd = [1,2,3]
+
+            if Feature_p.__contains__(vd):
+                cont -=1
+
+            if Feature_p.__contains__(vd) and not Labled.__contains__(vd):
+                #corner vertex has priority connect to neighbors
+                if Corner_v.__contains__(vd):
+                    Edge.append([v , vd])
+                    continue
+
+                #consider the third vertex
+                e_n =[] #the next edge of vd
+                vn = [] #the end vertex of e_n
+                #the three vertices of one face are all feature points
+            
+                if not Corner_v.__contains__(vn):
+                    #consider the oposite triangle
+                    e_n = 0 #the prev edge of twin of v_r(j)
+                    vn_p = 0 #the orig vertex of e_n
+
+                    if Corner_v.__contains__(vn_p):
+                        Edge.append([v, vd])# creat the connectiong of the feature vertices
+                        continue
 
 
+            if cont == len(v_r)-1:
+                Isolated.append(v)
 
+    #delete isolated feature vertex
+    if len(Isolated) ==0:
+        pass
+    
     Edge = read_file_u('Test/Edge.txt')
 
     return Sharp_edge_v, Corner_v, Edge
+    '''
+
+def posprocessing_delete_small_circle(Edge, D):
+    '''
+    posprocessing_delete_small_circle - delete small circles,
+    deal with feature edges only when vertex valence degree is equal to two
+
+    Input:
+        - 'Edge'                : m*2 feature edge
+        - 'D'                   : data structure, contains following terms
+        -   'D.one_ring_vertex' : one ring vertices of a vertex
+        -   'D.one_ring_face'   : one ring faces of a vertex
+        -   'D.normal'          : vertex normal
+        -   'D.thgm'            : average lenth of the mesh edge
+        -   'D.nov'             : vertex size
+    Output:
+        - 'Edge'                : m*2 filtered feature edge
+
+    Copyright (c) 2012 Xiaochao Wang
+    :param Edge:
+    :param D:
+    :return:
+    '''
+    #Feature_pNew = unique([Edge(:, 1)' Edge(:,2)'] );
+    Feature_pNew = []
+    #VfeatureDegree = ComputDegree(D, Feature_pNew, Edge);
+    VfeatureDegree = []
+
+    #record the acessed vertex
+    HasDone = np.ones(len(Feature_pNew))
+
+    for i in len(Feature_pNew):
+        curV = Feature_pNew[i]
+
+        #deal with unprocessing vertex only
+        if HasDone(i) == 1:
+            # for vertex with 2 neighbors
+            if VfeatureDegree[i] == 2:
+                #record the length of feature line
+                flag = 0
+                #record the whether teminate in a circal case
+                Door = 0;
+                RecordV = [];
+                RecordV = RecordV + curV
+
+                #start vertex
+                starV = curV
+                neig = normal_tensor_voting.getNeighbors(D, Feature_pNew, Edge, curV)
+
+                if len[neig] != 2:
+                    continue
+                else:
+                    flag = flag + 1;
+                    nextV = neig(1);
+                    RecordV = RecordV + nextV
+
+                    #recode the processed vertex
+                    #Id = find(nextV == Feature_pNew);
+                    #HasDone[Id] = 0;
+
+                    neig = normal_tensor_voting.getNeighbors(D, Feature_pNew, Edge, nextV)
+
+                    #iterative to find all circle edges
+                    while True:
+                        if len[neig] != 2 or flag >= 8:
+                            break
+
+                        #nextV = setdiff(neig, curV)
+                        curV = RecordV[-1]
+                        RecordV = RecordV + nextV
+
+                        if nextV == starV:
+                            Door = 1
+                            break
+
+                        #recode the processed vertex
+                        Id = []
+                        HasDone[Id] = 0
+                        flag = flag + 1
+
+                        neig = normal_tensor_voting.getNeighbors(D, Feature_pNew, Edge, nextV)
+
+                    #delete the circle edges
+                    if Door==1:
+                        for j in range( len(RecordV) ):
+                            xy= normal_tensor_voting.getEdge(Edge, RecordV(j), RecordV(j + 1));
+                            if len(xy)!=0:
+                                Edge[xy[0]] = [];
+
+
+
+
+
+
+
+    return None
