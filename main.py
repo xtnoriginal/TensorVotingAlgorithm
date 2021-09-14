@@ -31,15 +31,14 @@ class DataStructure:
 def run_progarm():
 
     # read models
-    mesh = model3D.read_model('Models/OFF/cube.off')
-    #mesh = model3D.read_model('Models/OFF/fandisk_noise.off')
+    #mesh = model3D.read_model('Models/OFF/cube.off')
+    mesh = model3D.read_model('Models/OFF/fandisk_noise.off')
     #mesh = model3D.read_model('Models/PLY/Chapel.ply')
-    #mesh = model3D.read_model('Models/OFF/gg.off')
+    #mesh = model3D.read_model('Models/PLY/mba1.ply')
     V = np.asarray(mesh.vertices)
     F = np.asarray(mesh.triangles)
 
-    line_set= o3d.geometry.LineSet.create_from_triangle_mesh(mesh)
-
+    #line_set= o3d.geometry.LineSet.create_from_triangle_mesh(mesh)
     halfedge = o3d.geometry.HalfEdgeTriangleMesh.create_from_triangle_mesh(mesh)
 
 
@@ -83,34 +82,25 @@ def run_progarm():
 
 
     # show mesh and feature vertex
-    #model3D.show_feature_vertex(V, F, Sharp_edge_v, Corner_v)
+    #graph_plotter.show_feature_vertex(V, F, Sharp_edge_v, Corner_v)
 
     #
     #PART2: Salience measure computation
     #
 
+    #model3D.show_feature_vertex(V, F, Sharp_edge_v, Corner_v)
     Salience , EHSalience , LENTH = normal_tensor_voting.compute_enhanced_salience_measure(V,F,D,PRIN,EVEN,Sharp_edge_v, Corner_v)
 
-    '''
+
     # show the salience measure
     TH = []
     Id = []
     Temp = []
 
     Temp = [Salience[Sharp_edge_v[i]] for i in range(len(Sharp_edge_v))]
-
-
-    Temp.sort()#getting zeros first
-
-    Temp = []
-    #correct from here
-    file = open('TEST\\temppp.txt')
-    for i in file:
-        Temp.append(float(i.strip()))
-    file.close()
+    Temp.sort()
 
     TH = Temp[math.floor(len(Temp) * 0.80):]
-
     mean = np.mean(TH)
 
 
@@ -121,18 +111,12 @@ def run_progarm():
     Id = []
     Temp = []
     Temp = [EHSalience[Sharp_edge_v[i]] for i in range(len(Sharp_edge_v))]
-    # correct from here
-    file = open('TEST\\TempEHsal.txt')
-    for i in file:
-        Temp.append(float(i.strip()))
-    file.close()
-
-    Temp.sort()  #todo getting zeros first
+    Temp.sort()
     TH = Temp[math.floor(len(Temp) * 0.80):]
 
     mean = np.mean(TH)
     for i in range(len(Corner_v)):
-        Salience[Corner_v[i]] = mean
+        EHSalience[Corner_v[i]] = mean
 
     #show the salience before enhanced
     #show_vertex_salience(V,F,-Salience)
@@ -141,19 +125,19 @@ def run_progarm():
     # show_vertex_salience(V,F,-EHSalience);
 
     #set threshold to filter the false feature points
-    #temp = [EHSalience[Sharp_edge_v[i]] for i in range(len(Sharp_edge_v))]
-    temp = []
-    file = open('TEST\\TempEHsal.txt')
-    for i in file:
-        temp.append(float(i.strip()))
-    file.close()
+    temp = [EHSalience[Sharp_edge_v[i]] for i in range(len(Sharp_edge_v))]
+    temp.sort()
+
+
     x = np.linspace(0,1,len(temp))
+
 
     x = [[i] for i in x]
 
     graph_plotter.plot_line(x,temp)
-    #interactive select threshold
 
+
+    #interactive select threshold
     while True:
 
         TH = float(input('Input a threshold based on salience measure:--'))
@@ -166,7 +150,7 @@ def run_progarm():
         F_R_P = [Sharp_edge_v[i] for i in Id]
 
         #show feature vertex
-        model3D.show_feature_vertex(V,F, F_R_P, Corner_v)
+        graph_plotter.show_feature_vertex(V, F, F_R_P, Corner_v)
 
         Door = input('Filter Non Feature Vertex -- The result is OK? Input: y or n:--')
         if Door == 'y' or Door == 'Y':
@@ -176,17 +160,18 @@ def run_progarm():
     #
     #PART 3: Connect the feature point to feature line
     #
-    '''
+
     '''
     Sharp_edge_v = []
     file = open('TEST\\FRP.txt')
     for i in file:
         Sharp_edge_v.append(int(i.strip()))
     file.close()
-
-    Edge =  normal_tensor_voting.connect_feature_line(halfedge,Sharp_edge_v,Corner_v)
-    graph_plotter.show_feature_line(V, F, Edge)
     '''
+
+    Edge =  normal_tensor_voting.connect_feature_line(halfedge,F_R_P,Corner_v)
+    graph_plotter.show_feature_line(V, F, Edge)
+
 
     '''
     graph_plotter.show_feature_line(V,F, Edge)
@@ -261,7 +246,6 @@ def run_progarm():
     #delte small circles
     Edge = normal_tensor_voting.posprocessing_delete_small_circle(Edge, D)
     '''
-
 
 def pymesh_test():
     print(trimesh)

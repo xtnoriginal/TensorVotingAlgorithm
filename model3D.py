@@ -4,7 +4,26 @@ import open3d as o3d
 import scipy
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
+def simplify_mesh(mesh_in):
+    voxel_size = max(mesh_in.get_max_bound() - mesh_in.get_min_bound()) / 32
+    print(f'voxel_size = {voxel_size:e}')
+    mesh_smp = mesh_in.simplify_vertex_clustering(
+        voxel_size=voxel_size,
+        contraction=o3d.geometry.SimplificationContraction.Average)
+    print(
+        f'Simplified mesh has {len(mesh_smp.vertices)} vertices and {len(mesh_smp.triangles)} triangles'
+    )
+    o3d.visualization.draw_geometries([mesh_smp])
 
+    voxel_size = max(mesh_in.get_max_bound() - mesh_in.get_min_bound()) / 16
+    print(f'voxel_size = {voxel_size:e}')
+    mesh_smp = mesh_in.simplify_vertex_clustering(
+        voxel_size=voxel_size,
+        contraction=o3d.geometry.SimplificationContraction.Average)
+    print(
+        f'Simplified mesh has {len(mesh_smp.vertices)} vertices and {len(mesh_smp.triangles)} triangles'
+    )
+    o3d.visualization.draw_geometries([mesh_smp])
 
 def read_model(filename):
     '''

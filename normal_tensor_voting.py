@@ -285,7 +285,7 @@ def compute_enhanced_salience_measure(V, F, D, PRIN, EVEN, Sharp_edge_v, Corner_
             Salience[i] = abs(Cn[i])
             # Saliencel[i] = abs(Cn[i])
 
-
+        '''
         v_r_l_c = [V[h] for h in v_ring_1_arr] #one ring vertex coordinates
         v_ring_dest = np.subtract(v_r_l_c, np.tile(v, (len(v_ring_1), 1))) #the vector from v to one ring vertices
 
@@ -295,7 +295,7 @@ def compute_enhanced_salience_measure(V, F, D, PRIN, EVEN, Sharp_edge_v, Corner_
 
         print(p_ring_1)
 
-        '''
+        
         p_c_m_d = PRIN[i]  # the principal director based on th tensor
         # First decide wether the two neighbor points along the principal lines
         # the active front of along the principal curvature line
@@ -360,11 +360,16 @@ def compute_enhanced_salience_measure(V, F, D, PRIN, EVEN, Sharp_edge_v, Corner_
             dist1 = [] #the distance wights
         '''
 
-
+    '''
     LENTH = read_file('TEST/LENTH.txt')
     EHSalience = read_file('TEST/EHSalience.txt')
     Salience = read_file('TEST/Salience.txt')
-
+    '''
+    #'''
+    LENTH = read_file('TEST/lent.txt')
+    EHSalience = read_file('TEST/EHSal.txt')
+    Salience = read_file('TEST/Sal.txt')
+    #'''
     return Salience, EHSalience, LENTH
 
 
@@ -437,7 +442,7 @@ def connect_feature_line(M,Sharp_edge_v,Corner_v):
 
     Feature_p = set()
     for i in Sharp_edge_v:
-        Feature_p.add(i-1)
+        Feature_p.add(i)
 
     for i in Corner_v:
         Feature_p.add(i)
@@ -455,8 +460,6 @@ def connect_feature_line(M,Sharp_edge_v,Corner_v):
 
         cont = 0
         for j in range(len(v_r)):
-            print(cont)
-            cont+=1
             vd = M.half_edges[v_r[j]].vertex_indices
             if vd[0] in Feature_p and vd[1] in Feature_p:
                 Edge.append(vd)
